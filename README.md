@@ -8,7 +8,7 @@ Implementação de um sistema distruibuido utilizando middleware (Java RMI) que 
 3. Tolerância a falhas
 
 ## Documentação
-* [Diagrama de classes]()
+* [Diagrama de classes](https://drive.google.com/file/d/1ygFX1-yCF28C9Us6JJQdcrbIhEdgRa7P/view?usp=sharing)
 
 ## Autores
 * [Pedro Benevides](https://github.com/Pedro-Benevides)
