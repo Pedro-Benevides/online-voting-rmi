@@ -1,14 +1,24 @@
 package Classes;
 
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Map;
 
 import Classes.Interfaces.RemoteVotingI;
 import Classes.Interfaces.ServerI;
 
-public class VotingServer implements ServerI, RemoteVotingI {
+public class VotingServer extends UnicastRemoteObject implements ServerI, RemoteVotingI {
+
     private Map<String, Integer> votes;
     private List<VotingServerCopy> serverCopies;
+
+    public VotingServer() throws RemoteException {
+        //
+    }
 
     public Map<String, Integer> getVotes() {
         return votes;
@@ -53,5 +63,25 @@ public class VotingServer implements ServerI, RemoteVotingI {
 
     public Results ShowResults() {
         return new Results();
+    }
+
+    public static void main(String[] args) {
+        try {
+            // Criar e exportar a instância do servidor de votação
+            VotingServer servidor = new VotingServer();
+            // RemoteVotingI stub = (RemoteVotingI)
+            // UnicastRemoteObject.exportObject(servidor, 0);
+
+            // Iniciar o registro RMI no servidor
+            Registry registry = LocateRegistry.createRegistry(1099);
+
+            // Registrar o servidor de votação no registro de nomes
+            registry.rebind("VotingServer", ((RemoteVotingI) servidor));
+
+            System.out.println("Servidor de votação pronto para receber conexões.");
+        } catch (Exception e) {
+            System.err.println("Erro no servidor: " + e.toString());
+            e.printStackTrace();
+        }
     }
 }

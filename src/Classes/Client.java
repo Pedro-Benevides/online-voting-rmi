@@ -1,16 +1,23 @@
 package Classes;
 
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
 import Classes.Interfaces.ClientI;
 import Classes.Interfaces.RemoteVotingI;
 
 public class Client implements ClientI, RemoteVotingI {
-    private VotingServer votingServer;
+    private RemoteVotingI votingServer;
 
-    public VotingServer getVotingServer() {
+    public RemoteVotingI getVotingServer() {
         return votingServer;
     }
 
-    public void setVotingServer(VotingServer votingServer) {
+    public void setVotingServer(RemoteVotingI votingServer) {
         this.votingServer = votingServer;
     }
 
@@ -23,6 +30,37 @@ public class Client implements ClientI, RemoteVotingI {
     }
 
     public void ConnectServer() {
-
+        try {
+            // Obter o servidor de votação no registro de nomes
+            RemoteVotingI votingServer = (RemoteVotingI) Naming.lookup("//127.0.0.1:1099/VotingServer");
+            this.setVotingServer(votingServer);
+            System.err.println("Conexão com servior estabelecida");
+        } catch (MalformedURLException e) {
+            e.toString();
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.toString();
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.toString();
+            e.printStackTrace();
+        }
     }
+
+    public static void main(String[] args) {
+        try {
+            Client client = new Client();
+
+            // Conectar ao servidor de votação
+            client.ConnectServer();
+
+            // Realizar operações de votação
+            // client.RegisterVote();
+            // client.ShowResults();
+        } catch (Exception e) {
+            System.err.println("Erro no cliente: " + e.toString());
+            e.printStackTrace();
+        }
+    }
+
 }
