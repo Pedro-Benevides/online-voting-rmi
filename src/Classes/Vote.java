@@ -27,17 +27,16 @@ public class Vote extends Thread {
 
                 this.voting.RegisterVote(Integer.valueOf(buffer.readLine()));
 
-                // this.voting.ShowResults();
                 // Controle da repetição do loop
-                // System.out.println("\n Votar novamente? \n 1)Sim \n 2)Nao");
+                System.out.println("\n 1)Votar novamente \n 2)Mostrar resultados atualizados e sair");
 
-                // DataInputStream voteAgain = new DataInputStream(System.in);
-                // BufferedReader choiceBuffer = new BufferedReader(new
-                // InputStreamReader(voteAgain));
+                DataInputStream voteAgain = new DataInputStream(System.in);
+                BufferedReader choiceBuffer = new BufferedReader(new InputStreamReader(voteAgain));
 
-                // if (Integer.valueOf(choiceBuffer.readLine()) != 1) {
-                // choice = false;
-                // }
+                if (Integer.valueOf(choiceBuffer.readLine()) != 1) {
+                    choice = false;
+                    System.out.println(this.voting.ShowResults());
+                }
 
             } catch (Exception e) {
                 e.toString();

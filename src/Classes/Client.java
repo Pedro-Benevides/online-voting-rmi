@@ -4,20 +4,17 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import Classes.Interfaces.ClientI;
 import Classes.Interfaces.RemoteVotingI;
 
 public class Client extends UnicastRemoteObject implements ClientI, RemoteVotingI {
+    private RemoteVotingI votingServer;
+
     protected Client() throws RemoteException {
         super();
-        
     }
-
-    private RemoteVotingI votingServer;
 
     public RemoteVotingI getVotingServer() {
         return votingServer;
@@ -42,9 +39,7 @@ public class Client extends UnicastRemoteObject implements ClientI, RemoteVoting
     }
 
     @Override
-    public Results ShowResults() throws RemoteException {
-        System.out.println("client");
-        
+    public String ShowResults() throws RemoteException {
         return this.getVotingServer().ShowResults();
     }
 
@@ -56,6 +51,8 @@ public class Client extends UnicastRemoteObject implements ClientI, RemoteVoting
 
             this.setVotingServer(votingServer);
             System.err.println("Conexão com servior estabelecida");
+
+            // Inicio da thread de Votação
             new Vote(this);
 
         } catch (MalformedURLException e) {
@@ -76,10 +73,6 @@ public class Client extends UnicastRemoteObject implements ClientI, RemoteVoting
 
             // Conectar ao servidor de votação
             client.ConnectServer();
-
-            // Realizar operações de votação
-            // client.RegisterVote();
-            // client.ShowResults();
         } catch (Exception e) {
             System.err.println("Erro no cliente: " + e.toString());
             e.printStackTrace();

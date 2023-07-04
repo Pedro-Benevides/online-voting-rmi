@@ -1,6 +1,5 @@
 package Classes;
 
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -20,24 +19,16 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
     private List<VotingServerCopy> serverCopies = new ArrayList<VotingServerCopy>();
 
     public VotingServer() throws RemoteException {
-        this.getVotes().put("1",0);
-        this.getVotes().put("2",0);
+        this.getVotes().put("1", 0);
+        this.getVotes().put("2", 0);
     }
 
     public Map<String, Integer> getVotes() {
         return votes;
     }
 
-    public void setVotes(Map<String, Integer> votes) {
-        this.votes = votes;
-    }
-
     public List<VotingServerCopy> getServerCopies() {
         return serverCopies;
-    }
-
-    public void setServerCopies(List<VotingServerCopy> serverCopies) {
-        this.serverCopies = serverCopies;
     }
 
     public void StartServer() {
@@ -70,22 +61,6 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
         this.getServerCopies().remove(serverCopy);
     }
 
-    public int LocalVotes() {
-        int totalVotes = 0;
-
-        List<Integer> optionVotes = this.getVotes().entrySet()
-                .stream()
-                .map(votes -> votes.getValue())
-                .collect(Collectors.toList());
-
-        System.out.println(optionVotes.toString());
-        for (int votes : optionVotes) {
-            totalVotes += votes;
-        }
-
-        return totalVotes;
-    }
-
     public int LocalVotes(String option) {
         int totalVotes = 0;
 
@@ -109,13 +84,11 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
         } else {
             this.getVotes().put(option, this.getVotes().get(option) + 1);
         }
-        System.out.println(this.LocalVotes());
+
     }
 
-    public Results ShowResults() {
-        Results results = new Results(this.LocalVotes(), this.getVotes());
-
-        return results;
+    public String ShowResults() {
+        return ("\n Votos na opção 1: " + this.LocalVotes("1")) + ("\n Votos na opção 2: " + this.LocalVotes("2"));
     }
 
     public static void main(String[] args) {
