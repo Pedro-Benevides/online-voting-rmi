@@ -7,6 +7,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import Classes.Interfaces.RemoteVotingI;
 import Classes.Interfaces.ServerI;
@@ -37,28 +38,57 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
     }
 
     public void StartServer() {
-
+        try {
+                // Iniciar o registro RMI no servidor
+                VotingServerCopy serverCopy = new VotingServerCopy();
+                Registry registry = LocateRegistry.createRegistry(1099);
+    
+                // Registrar o servidor de votação no registro de nomes
+                registry.rebind("VotingServer", ((RemoteVotingI) serverCopy));
+                this.AddServerCopy(serverCopy);
+    
+                System.out.println("Servidor de votação pronto para receber conexões.");
+            
+        } catch (Exception e) {
+            e.toString();
+            e.printStackTrace();
+        }
     }
 
     public void CloseServer() {
-
+        //
     }
 
-    public void AddServerCopy() {
-        this.getServerCopies().add(null);
+    public void AddServerCopy(VotingServerCopy serverCopy) {
+        this.getServerCopies().add(serverCopy);
     }
 
     public void RemoveServerCopy(VotingServerCopy serverCopy) {
         this.getServerCopies().remove(serverCopy);
     }
 
-    public int LocalVotes() {
-        // TODO: percorrer somando os votos
-        return 1;
+    public int LocalVotes(String option) {
+        int totalVotes = 0;
+
+        List<Integer> optionVotes = this.getVotes().entrySet()
+        .stream()
+        .filter(votes -> votes.getKey() == option )
+        .map( votes -> votes.getValue() )
+        .collect(Collectors.toList());
+
+        for (int votes:optionVotes){
+            totalVotes += votes;
+        }
+
+        return totalVotes;
     }
 
     public void RegisterVote(int vote) {
-        this.getVotes().put(null, null);
+        if (vote == 1) {
+            this.getVotes().put("1", 1);
+        } else {
+            this.getVotes().put("2", 1);
+        }
     }
 
     public Results ShowResults() {
@@ -67,18 +97,10 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
 
     public static void main(String[] args) {
         try {
-            // Criar e exportar a instância do servidor de votação
+            // Criar a instância do servidor de votação
             VotingServer servidor = new VotingServer();
-            // RemoteVotingI stub = (RemoteVotingI)
-            // UnicastRemoteObject.exportObject(servidor, 0);
 
-            // Iniciar o registro RMI no servidor
-            Registry registry = LocateRegistry.createRegistry(1099);
-
-            // Registrar o servidor de votação no registro de nomes
-            registry.rebind("VotingServer", ((RemoteVotingI) servidor));
-
-            System.out.println("Servidor de votação pronto para receber conexões.");
+            servidor.StartServer();
         } catch (Exception e) {
             System.err.println("Erro no servidor: " + e.toString());
             e.printStackTrace();

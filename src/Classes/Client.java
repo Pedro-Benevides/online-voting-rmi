@@ -21,19 +21,34 @@ public class Client implements ClientI, RemoteVotingI {
         this.votingServer = votingServer;
     }
 
+    @Override
     public void RegisterVote(int vote) {
-
+        try {
+            if (vote > 2) {
+                System.out.println("Voto invalido");
+            } else {
+                this.getVotingServer().RegisterVote(vote);
+            }
+        } catch (RemoteException e) {
+            
+            e.printStackTrace();
+        }
     }
-
+    
+    @Override
     public Results ShowResults() {
         return new Results();
     }
 
+    @Override
     public void ConnectServer() {
         try {
             // Obter o servidor de votação no registro de nomes
             RemoteVotingI votingServer = (RemoteVotingI) Naming.lookup("//127.0.0.1:1099/VotingServer");
+            
             this.setVotingServer(votingServer);
+            new Vote(this);
+
             System.err.println("Conexão com servior estabelecida");
         } catch (MalformedURLException e) {
             e.toString();
