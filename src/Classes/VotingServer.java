@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,8 +16,8 @@ import Classes.Interfaces.ServerI;
 
 public class VotingServer extends UnicastRemoteObject implements ServerI, RemoteVotingI {
 
-    private Map<String, Integer> votes;
-    private List<VotingServerCopy> serverCopies;
+    private Map<String, Integer> votes = new HashMap<String, Integer>();
+    private List<VotingServerCopy> serverCopies = new ArrayList<VotingServerCopy>();
 
     public VotingServer() throws RemoteException {
         //
@@ -39,16 +41,16 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
 
     public void StartServer() {
         try {
-                // Iniciar o registro RMI no servidor
-                VotingServerCopy serverCopy = new VotingServerCopy();
-                Registry registry = LocateRegistry.createRegistry(1099);
-    
-                // Registrar o servidor de votação no registro de nomes
-                registry.rebind("VotingServer", ((RemoteVotingI) serverCopy));
-                this.AddServerCopy(serverCopy);
-    
-                System.out.println("Servidor de votação pronto para receber conexões.");
-            
+            // Iniciar o registro RMI no servidor
+            // VotingServerCopy serverCopy = new VotingServerCopy();
+            Registry registry = LocateRegistry.createRegistry(1099);
+
+            // Registrar o servidor de votação no registro de nomes
+            registry.rebind("VotingServer", ((RemoteVotingI) this));
+            // this.AddServerCopy(serverCopy);
+
+            System.out.println("Servidor de votação pronto para receber conexões.");
+
         } catch (Exception e) {
             e.toString();
             e.printStackTrace();
@@ -71,12 +73,12 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
         int totalVotes = 0;
 
         List<Integer> optionVotes = this.getVotes().entrySet()
-        .stream()
-        .filter(votes -> votes.getKey() == option )
-        .map( votes -> votes.getValue() )
-        .collect(Collectors.toList());
+                .stream()
+                .filter(votes -> votes.getKey() == option)
+                .map(votes -> votes.getValue())
+                .collect(Collectors.toList());
 
-        for (int votes:optionVotes){
+        for (int votes : optionVotes) {
             totalVotes += votes;
         }
 
