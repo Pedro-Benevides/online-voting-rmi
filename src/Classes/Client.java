@@ -30,11 +30,11 @@ public class Client implements ClientI, RemoteVotingI {
                 this.getVotingServer().RegisterVote(vote);
             }
         } catch (RemoteException e) {
-            
+
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public Results ShowResults() {
         return new Results();
@@ -45,11 +45,11 @@ public class Client implements ClientI, RemoteVotingI {
         try {
             // Obter o servidor de votação no registro de nomes
             RemoteVotingI votingServer = (RemoteVotingI) Naming.lookup("//127.0.0.1:1099/VotingServer");
-            
+
             this.setVotingServer(votingServer);
+            System.err.println("Conexão com servior estabelecida");
             new Vote(this);
 
-            System.err.println("Conexão com servior estabelecida");
         } catch (MalformedURLException e) {
             e.toString();
             e.printStackTrace();
