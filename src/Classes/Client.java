@@ -6,11 +6,17 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 import Classes.Interfaces.ClientI;
 import Classes.Interfaces.RemoteVotingI;
 
-public class Client implements ClientI, RemoteVotingI {
+public class Client extends UnicastRemoteObject implements ClientI, RemoteVotingI {
+    protected Client() throws RemoteException {
+        super();
+        
+    }
+
     private RemoteVotingI votingServer;
 
     public RemoteVotingI getVotingServer() {
@@ -36,8 +42,10 @@ public class Client implements ClientI, RemoteVotingI {
     }
 
     @Override
-    public Results ShowResults() {
-        return new Results();
+    public Results ShowResults() throws RemoteException {
+        System.out.println("client");
+        
+        return this.getVotingServer().ShowResults();
     }
 
     @Override

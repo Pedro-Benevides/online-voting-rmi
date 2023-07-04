@@ -20,7 +20,8 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
     private List<VotingServerCopy> serverCopies = new ArrayList<VotingServerCopy>();
 
     public VotingServer() throws RemoteException {
-        //
+        this.getVotes().put("1",0);
+        this.getVotes().put("2",0);
     }
 
     public Map<String, Integer> getVotes() {
@@ -46,7 +47,7 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
             Registry registry = LocateRegistry.createRegistry(1099);
 
             // Registrar o servidor de votação no registro de nomes
-            registry.rebind("VotingServer", ((RemoteVotingI) this));
+            registry.rebind("VotingServer", this);
             // this.AddServerCopy(serverCopy);
 
             System.out.println("Servidor de votação pronto para receber conexões.");
@@ -69,6 +70,22 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
         this.getServerCopies().remove(serverCopy);
     }
 
+    public int LocalVotes() {
+        int totalVotes = 0;
+
+        List<Integer> optionVotes = this.getVotes().entrySet()
+                .stream()
+                .map(votes -> votes.getValue())
+                .collect(Collectors.toList());
+
+        System.out.println(optionVotes.toString());
+        for (int votes : optionVotes) {
+            totalVotes += votes;
+        }
+
+        return totalVotes;
+    }
+
     public int LocalVotes(String option) {
         int totalVotes = 0;
 
@@ -85,16 +102,20 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
         return totalVotes;
     }
 
-    public void RegisterVote(int vote) {
-        if (vote == 1) {
-            this.getVotes().put("1", 1);
+    public void RegisterVote(int optionVote) {
+        String option = String.valueOf(optionVote);
+        if (optionVote == 1) {
+            this.getVotes().put(option, this.getVotes().get(option) + 1);
         } else {
-            this.getVotes().put("2", 1);
+            this.getVotes().put(option, this.getVotes().get(option) + 1);
         }
+        System.out.println(this.LocalVotes());
     }
 
     public Results ShowResults() {
-        return new Results();
+        Results results = new Results(this.LocalVotes(), this.getVotes());
+
+        return results;
     }
 
     public static void main(String[] args) {
