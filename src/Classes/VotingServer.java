@@ -34,12 +34,12 @@ public class VotingServer extends UnicastRemoteObject implements ServerI, Remote
     public void StartServer() {
         try {
             // Iniciar o registro RMI no servidor
-            // VotingServerCopy serverCopy = new VotingServerCopy();
+            VotingServerCopy serverCopy = new VotingServerCopy();
             Registry registry = LocateRegistry.createRegistry(1099);
 
             // Registrar o servidor de votação no registro de nomes
             registry.rebind("VotingServer", this);
-            // this.AddServerCopy(serverCopy);
+            this.AddServerCopy(serverCopy);
 
             System.out.println("Servidor de votação pronto para receber conexões.");
 
