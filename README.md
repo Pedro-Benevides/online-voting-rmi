@@ -10,6 +10,9 @@ Implementação de um sistema distruibuido utilizando middleware (Java RMI) que 
 ## Documentação
 * [Diagrama de classes](https://drive.google.com/file/d/1ygFX1-yCF28C9Us6JJQdcrbIhEdgRa7P/view?usp=sharing)
 
+## Explicação do funcionamento
+* [Online Voting - YouTube](https://youtu.be/wfpePFS4wjA)
+
 ## Autores
 * [Pedro Benevides](https://github.com/Pedro-Benevides)
 * [Rafael R C Cruz](https://github.com/ookamyabyss)
